@@ -63,10 +63,16 @@ jobs:
 
       - name: deploy the pull request
         run: |
-          # deployment logic goes here
-          sleep 10
-          # instead we randomly succeed or fail the deployment
-          exit $(( $RANDOM % 10 >= 5 ))
+          prodRun=""
+          if [[ ${GITHUB_REF} == "refs/heads/main" ]]; then
+            prodRun="--prod"
+          fi
+
+          npx vercel --token ${VERCEL_TOKEN} $prodRun
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       - name: set deployment status to success
         id: successful_deployment
         uses: octokit/request-action@v2.x
