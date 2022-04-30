@@ -1,6 +1,9 @@
 name: pr-deployment
 
 on:
+  push:
+    branches:
+      - main
   issue_comment:
     types: [created]
 
