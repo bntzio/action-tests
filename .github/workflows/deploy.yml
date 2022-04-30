@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: acknowledge deployment request to commenter
         id: check
-        uses: khan/pull-request-comment-trigger@master
+        uses: khan/pull-request-comment-trigger@v1.1.0
         with:
           trigger: "/deploy"
           reaction: rocket
