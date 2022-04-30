@@ -1,0 +1,29 @@
+name: Deploy Stage
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  deploy:
+    name: Stage Deployment
+    runs-on: ubuntu-latest
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/deploy' }}
+    steps:
+      - name: Get pull request SHA
+        id: sha
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            const pr = await github.pulls.get({
+              owner,
+              repo,
+              pull_number: number,
+            });
+            return pr.data.head.sha
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.sha.outputs.result }}
+      - name: Start deployment
+        run: |
+          echo Deploying to Stage...
