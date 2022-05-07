@@ -1,41 +1,18 @@
 name: pr-deployment
 
 on:
-  issue_comment:
-    types: [created]
   push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
-  reset-status:
+  check-label:
     runs-on: ubuntu-latest
     steps:
-      - name: reset commit status
-        id: reset-status
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/:repository/statuses/:head_sha
-          repository: ${{ github.repository }}
-          head_sha: ${{ github.sha }}
-          context: Reset Commit Status
-          description: Reset commit status to prevent merging
-          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          state: failure
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-  deploy-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: acknowledge deployment request to commenter
-        id: check
-        uses: khan/pull-request-comment-trigger@v1.1.0
-        with:
-          trigger: "/deploy"
-          reaction: rocket
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-    outputs:
-      triggered: ${{ steps.check.outputs.triggered }}
+      - name: Check that Deployed label is set
+    run: |
+      contains(github.event.pull_request.labels.*.name, 'Deployed')
 
   deploy:
     runs-on: ubuntu-latest
@@ -91,7 +68,6 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-
       - name: set deployment status to success
         id: successful_deployment
         uses: octokit/request-action@v2.x
