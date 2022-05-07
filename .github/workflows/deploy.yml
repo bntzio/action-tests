@@ -9,14 +9,19 @@ jobs:
   reset-status:
     runs-on: ubuntu-latest
     steps:
-      - name: reset commit status
-        id: reset-status
-        run: |
-          curl \
-            -X POST \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.owner }}/${{ github.repository }}/statuses/${{ github.sha }} \
-            -d '{"state":"failure","target_url":"https://example.com/build/status","description":"test","context":"test"}'
+      - name: set deployment status to pending
+        id: pending_deployment
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/:repository/deployments/:deployment/statuses
+          repository: ${{ github.repository }}
+          deployment: ${{ fromJson(steps.create_deployment.outputs.data).id }}
+          environment: dev
+          environment_url: https://example.com
+          log_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          state: pending
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   deploy-check:
     runs-on: ubuntu-latest
