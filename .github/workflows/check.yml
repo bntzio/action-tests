@@ -13,13 +13,11 @@ jobs:
         with:
           route: GET /repos/:repository/deployments
           repository: ${{ github.repository }}
-          environment: dev
-          auto_merge: false
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: output
-        run: echo ${{ fromJson(steps.get_deployments.outputs.data) }}
+      # - name: output
+      #   run: echo ${{ fromJson(steps.get_deployments.outputs.data) }}
 
       - name: set deployment status to in progress
         id: start_deployment
