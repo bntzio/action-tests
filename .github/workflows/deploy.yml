@@ -3,7 +3,6 @@ name: pr-deployment
 on:
   issue_comment:
     types: [created]
-  push:
 
 jobs:
   reset-status:
