@@ -11,22 +11,12 @@ jobs:
     steps:
       - name: reset commit status
         id: reset-status
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/:owner/:repo/statuses/:sha
-          owner: ${{ github.owner }}
-          repo: ${{ github.repository }}
-          sha: ${{ github.sha }}
-          context: Reset Commit Status
-          description: Reset commit status to prevent merging
-          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          state: failure
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_REPOSITORY: ${{ github.repository }}
-          INPUT_BASE: ${{ github.base_ref }}
-          INPUT_HEAD: ${{ github.ref }}
-
+        run: |
+          curl \
+            -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.owner }}/${{ github.repository }}/statuses/${{ github.sha }} \
+            -d '{"state":"failure","target_url":"https://example.com/build/status","description":"test","context":"test"}'
 
   deploy-check:
     runs-on: ubuntu-latest
