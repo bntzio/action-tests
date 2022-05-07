@@ -13,15 +13,20 @@ jobs:
         id: reset-status
         uses: octokit/request-action@v2.x
         with:
-          route: PATCH /repos/:repository/statuses/:head_sha
-          repository: ${{ github.repository }}
-          head_sha: ${{ github.sha }}
+          route: POST /repos/:owner/:repo/statuses/:sha
+          owner: ${{ github.owner }}
+          repo: ${{ github.repository }}
+          sha: ${{ github.sha }}
           context: Reset Commit Status
           description: Reset commit status to prevent merging
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           state: failure
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          INPUT_REPOSITORY: ${{ github.repository }}
+          INPUT_BASE: ${{ github.base_ref }}
+          INPUT_HEAD: ${{ github.ref }}
+
 
   deploy-check:
     runs-on: ubuntu-latest
