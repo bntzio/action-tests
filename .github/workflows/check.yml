@@ -29,10 +29,12 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: output
+        run: echo ${{ fromJson(steps.get_deployments.outputs.data) }}
+
       - name: set deployment status to in progress
         id: start_deployment
         uses: octokit/request-action@v2.x
-        run: echo ${{ fromJson(steps.get_deployments.outputs.data) }}
         with:
           route: POST /repos/:repository/deployments/:deployment/statuses
           repository: ${{ github.repository }}
