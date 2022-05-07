@@ -13,7 +13,7 @@ jobs:
         id: reset-status
         uses: octokit/request-action@v2.x
         with:
-          route: POST /repos/:repository/statuses/:head_sha
+          route: PATCH /repos/:repository/statuses/:head_sha
           repository: ${{ github.repository }}
           head_sha: ${{ github.sha }}
           context: Reset Commit Status
