@@ -19,7 +19,7 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: create deployment
+      - name: create deployments
         id: create_deployment
         uses: octokit/request-action@v2.x
         with:
